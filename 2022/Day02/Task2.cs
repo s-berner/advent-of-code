@@ -1,6 +1,6 @@
 namespace AdventOfCode2022.Day02
 {
-    public class Task2
+    public class Task2 : IAdventOfCodeTask
     {
         public void Solve(string[] input)
         {

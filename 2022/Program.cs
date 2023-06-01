@@ -31,6 +31,12 @@
                 return;
             }
 
+            if (!(solution is IAdventOfCodeTask))
+            {
+                Console.WriteLine($"{type.FullName} does not implement IAdventOfCodeTask.");
+                return;
+            }
+
             string[] input = InputReader.ReadInput(day, mode);
 
             solution.Solve(input);

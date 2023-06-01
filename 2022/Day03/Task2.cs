@@ -1,6 +1,6 @@
 namespace AdventOfCode2022.Day03
 {
-    public class Task2
+    public class Task2 : IAdventOfCodeTask
     {
         private Dictionary<char, int> CharToValueMap = new Dictionary<char, int>();
 
