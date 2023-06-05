@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode2022
+﻿using System.Text;
+
+namespace AdventOfCode2022
 {
     class Program
     {
@@ -10,16 +12,14 @@
                 return;
             }
 
-            string day = args[0].ToLower();
-            string task = args[1].ToLower();
-            string mode = args[2].ToLower();
+            var (day, task, inputType) = (args[0].ToLower(), args[1].ToLower(), args[2].ToLower());
 
-            string path = $"AdventOfCode2022.Day{day.PadLeft(2, '0')}.Task{task}";
+            string path = $"AdventOfCode2022.Day{ day.PadLeft(2, '0') }.Task{ task }";
             Type? type = Type.GetType(path);
 
             if (type == null)
             {
-                Console.WriteLine($"No solution found for Day {day}, Task {task}.");
+                Console.WriteLine($"No solution found for Day { day }, Task { task }.");
                 return;
             }
 
@@ -27,21 +27,34 @@
 
             if (solution == null)
             {
-                Console.WriteLine($"Failed to create instance of {type.FullName}.");
+                Console.WriteLine($"Failed to create instance of { type.FullName }.");
                 return;
             }
 
             if (!(solution is IAdventOfCodeTask))
             {
-                Console.WriteLine($"{type.FullName} does not implement IAdventOfCodeTask.");
+                Console.WriteLine($"{ type.FullName } does not implement IAdventOfCodeTask.");
                 return;
             }
 
-            string[] input = InputReader.ReadInput(day, mode);
+            try
+            {
+                string[] input = InputReader.ReadInput(day, inputType);
 
-            solution.Solve(input);
+                solution.Solve(input);
 
-            Console.WriteLine("Program finished.");
+                Console.WriteLine("Program finished.");
+            }
+            catch (FileNotFoundException)
+            {
+                StringBuilder sb = new StringBuilder();
+
+                sb.AppendLine($"Input file not found for Day { day }, Task { task }.");
+                sb.AppendLine("Make sure the input file is named correctly and placed in the correct folder.");
+                sb.AppendLine("The input file should be named either puzzle-input.txt or demo-input.txt.");
+
+                Console.WriteLine(sb.ToString());
+            }
         }
     }
 }
