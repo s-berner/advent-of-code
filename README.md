@@ -13,7 +13,7 @@ To run the solutions and get the answers, you'll need a C# development environme
 1. Clone the repository:
 
 ```
-git clone https://github.com/s-berner/advent-of-code-solutions.git
+git clone https://github.com/s-berner/advent-of-code.git
 ```
 
 2. Navigate to the repository directory:
