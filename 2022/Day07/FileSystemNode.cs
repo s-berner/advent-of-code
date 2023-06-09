@@ -19,5 +19,10 @@ namespace AdventOfCode2022.Day07
         {
             Size = size;
         }
+
+        public override string ToString()
+        {
+            return $"{ Name } ({ (IsFile ? "File" : "Directory") }) Parent { Parent } - { Size } bytes";
+        }
     }
 }

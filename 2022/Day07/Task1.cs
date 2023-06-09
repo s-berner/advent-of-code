@@ -2,7 +2,7 @@ namespace AdventOfCode2022.Day07
 {
     public class Task1 : IAdventOfCodeTask
     {
-        private const int MaxSize = 1000000;
+        private const int MaxSize = 100000;
 
         public void Solve(string[] input)
         {
@@ -12,20 +12,27 @@ namespace AdventOfCode2022.Day07
 
             CalculateDirectorySizes(directories, nodes);
 
+            foreach (var directory in directories)
+            {
+                Console.WriteLine(directory.ToString());
+            }
+
             var qualifyingDirectories = directories.Where(directory => directory.Size <= MaxSize).ToList();
 
             var totalSize = qualifyingDirectories.Sum(directory => directory.Size);
 
-            var sb = new System.Text.StringBuilder();
+            // var sb = new System.Text.StringBuilder();
 
-            sb.AppendLine($"By deleting the following directories, we can save { totalSize } bytes.");
+            // sb.AppendLine($"By deleting the following directories, we can save { totalSize } bytes.");
 
-            foreach (var directory in qualifyingDirectories)
-            {
-                sb.AppendLine($"- { directory.Name } ({ directory.Size } bytes)");
-            }
+            // foreach (var directory in qualifyingDirectories)
+            // {
+            //     sb.AppendLine(directory.ToString());
+            // }
 
-            Console.WriteLine(sb.ToString());
+            // Console.WriteLine(sb.ToString());
+
+            Console.WriteLine("Task not completed yet.");
         }
 
         private void CalculateDirectorySizes(List<FileSystemNode> directories, List<FileSystemNode> nodes)
@@ -42,18 +49,21 @@ namespace AdventOfCode2022.Day07
 
             foreach (var node in nodes)
             {
-                if (node.Parent == directory.Name)
+                if (node.Parent != directory.Name)
                 {
-                    if (visitedDirectories.Contains(node.Name))
-                    {
-                        // Directory has already been visited, return 0 to avoid infinite recursion
-                        return 0;
-                    }
-
-                    visitedDirectories.Add(node.Name);
-
-                    size += node.IsFile ? node.Size : CalculateDirectorySize(node, nodes, visitedDirectories);
+                    continue;
                 }
+
+                if (visitedDirectories.Contains(node.Parent + node.Name))
+                {
+                    // Directory has already been visited, return 0 to avoid infinite recursion
+                    return 0;
+                }
+
+                var test = node.Parent + node.Name;
+                visitedDirectories.Add(test);
+
+                size += node.IsFile ? node.Size : CalculateDirectorySize(node, nodes, visitedDirectories);
             }
 
             return size;

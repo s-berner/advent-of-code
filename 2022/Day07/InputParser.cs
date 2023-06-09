@@ -59,6 +59,13 @@ namespace AdventOfCode2022.Day07
         {
             var args = line.Split(' ');
 
+            bool nodeAlreadyExists = Nodes.Any(node => node.Name == args[1] && node.Parent == GetParent());
+
+            if (nodeAlreadyExists)
+            {
+                return;
+            }
+
             if (args[0] == "dir")
             {
                 var name = args[1];
@@ -84,7 +91,7 @@ namespace AdventOfCode2022.Day07
         {
             if (CurrentPath.Count == 0)
             {
-                return string.Empty;
+                return "/";
             }
 
             return CurrentPath.Last();
