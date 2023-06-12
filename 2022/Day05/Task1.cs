@@ -4,6 +4,8 @@ namespace AdventOfCode2022.Day05
     {
         public void Solve(string[] input)
         {
+            Console.WriteLine("Day 05, Task 1 solution:");
+
             var parserOutput = InputParser.Parse(input);
             var cargoGrid = parserOutput.CargoGrid;
             var instructions = parserOutput.Instructions;

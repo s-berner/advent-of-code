@@ -6,6 +6,8 @@ namespace AdventOfCode2022.Day07
 
         public void Solve(string[] input)
         {
+            Console.WriteLine("Day 07, Task 1 solution:");
+
             var nodes = InputParser.Parse(input);
 
             var directories = nodes.Where(node => !node.IsFile).ToList();

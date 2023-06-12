@@ -6,6 +6,8 @@ namespace AdventOfCode2022.Day06
 
         public void Solve(string[] input)
         {
+            Console.WriteLine("Day 06, Task 2 solution:");
+
             var dataStream = InputParser.Parse(input);
 
             var startOfPacket = DataStreamHandler.FindStartOfMarker(dataStream, MarkerLength);

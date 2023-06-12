@@ -4,7 +4,8 @@ namespace AdventOfCode2022.Day07
     {
         public void Solve(string[] input)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Day 07, Task 2 solution:");
+            Console.WriteLine("Not yet implemented.");
         }
     }
 }
