@@ -31,7 +31,7 @@ namespace AdventOfCode2022
                 return;
             }
 
-            if (!(solution is IAdventOfCodeTask))
+            if (solution is not IAdventOfCodeTask)
             {
                 Console.WriteLine($"{ type.FullName } does not implement IAdventOfCodeTask.");
                 return;
@@ -47,7 +47,7 @@ namespace AdventOfCode2022
             }
             catch (FileNotFoundException)
             {
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new();
 
                 sb.AppendLine($"Input file not found for Day { day }, Task { task }.");
                 sb.AppendLine("Make sure the input file is named correctly and placed in the correct folder.");
