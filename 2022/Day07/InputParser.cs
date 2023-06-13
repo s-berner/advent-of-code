@@ -1,100 +1,57 @@
-namespace AdventOfCode2022.Day07
+namespace AdventOfCode2022.Day07;
+
+public class InputParser
 {
-    public class InputParser
+    public static ElfDirectory BuildElfFileSystem(string[] input)
     {
-        private static List<string> CurrentPath { get; set; } = new List<string>();
-        private static List<FileSystemNode> Nodes { get; set; } = new List<FileSystemNode>();
+        ElfDirectory root = new ("/", null!);
+        ElfDirectory currentDir = root;
 
-        public static List<FileSystemNode> Parse(string[] input)
+        foreach (string line in input)
         {
-            foreach (var line  in input)
+            if (ElfFile.IsParsable(line))
             {
-                if (line.StartsWith('$'))
-                {
-                    ParseCommand(line);
-
-                }
-
-                ParseFileOrDirectory(line);
+                currentDir = HandleFileLine(currentDir, line);
             }
 
-            return Nodes;
-        }
-
-        private static void ParseCommand(string line)
-        {
-            var args = line.Split(' ');
-            var commandName = args[1];
-
-            switch (commandName)
+            if (ElfDirectory.IsParsable(line))
             {
-                case "cd":
-                    HandleChangeDirectory(args[2]);
-                    break;
-                case "ls":
-                    // ls doesn't do anything in this task
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(commandName), commandName, null);
+                currentDir = HandleDirectoryLine(currentDir, line);
+            }
+
+            if (line.StartsWith("$ cd"))
+            {
+                currentDir = HandleChangeDirectory(currentDir, line);
             }
         }
 
-        private static void HandleChangeDirectory(string name)
+        return root;
+    }
+
+    private static ElfDirectory HandleDirectoryLine(ElfDirectory currentDir, string line)
+    {
+        ElfDirectory.Parse(currentDir, line);
+
+        return currentDir;
+    }
+
+    private static ElfDirectory HandleFileLine(ElfDirectory currentDir, string line)
+    {
+        ElfFile file = ElfFile.Parse(line);
+        currentDir.AddFile(file);
+
+        return currentDir;
+    }
+
+    private static ElfDirectory HandleChangeDirectory(ElfDirectory currentDir, string line)
+    {
+        string childName = line.Split(' ')[2];
+
+        return childName switch
         {
-            switch (name)
-            {
-                case "..":
-                    CurrentPath.RemoveAt(CurrentPath.Count - 1);
-                    break;
-                case "/":
-                    CurrentPath.Clear();
-                    break;
-                default:
-                    CurrentPath.Add(name);
-                    break;
-            }
-        }
-
-        private static void ParseFileOrDirectory(string line)
-        {
-            var args = line.Split(' ');
-
-            bool nodeAlreadyExists = Nodes.Any(node => node.Name == args[1] && node.Parent == GetParent());
-
-            if (nodeAlreadyExists)
-            {
-                return;
-            }
-
-            if (args[0] == "dir")
-            {
-                var name = args[1];
-                var isFile = false;
-                var size = 0;
-                var parent = GetParent();
-                var node = new FileSystemNode(name, isFile, parent, size);
-                Nodes.Add(node);
-            }
-
-            if (args[0].All(char.IsDigit))
-            {
-                var name = args[1];
-                var isFile = true;
-                var size = int.Parse(args[0]);
-                var parent = GetParent();
-                var node = new FileSystemNode(name, isFile, parent, size);
-                Nodes.Add(node);
-            }
-        }
-
-        private static string GetParent()
-        {
-            if (CurrentPath.Count == 0)
-            {
-                return "/";
-            }
-
-            return CurrentPath.Last();
-        }
+            ".." => currentDir.Parent,
+            "/" => currentDir,
+            _ => currentDir.FindChild(childName)!
+        };
     }
 }
