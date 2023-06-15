@@ -24,7 +24,7 @@ namespace AdventOfCode2022.Day05
             Console.WriteLine($"The message i will give to the elves is: { string.Join("", result) }");
         }
 
-        private List<List<char>> ExecuteInstruction(List<List<char>> cargoGrid, InputParser.Instruction instruction)
+        private static List<List<char>> ExecuteInstruction(List<List<char>> cargoGrid, InputParser.Instruction instruction)
         {
             var from = instruction.From - 1;
             var to = instruction.To - 1;
