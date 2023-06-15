@@ -2,59 +2,19 @@ namespace AdventOfCode2022.Day10;
 
 public class Task1 : IAdventOfCodeTask
 {
-    private int X = 1;
-    private int currentTick = 1;
-    private readonly List<XTick> Ticks = new() { new XTick { X = 1, Tick = 1 } };
-
     public void Solve(string[] input)
     {
+        Console.WriteLine("Day 10, Task 1 solution:");
+
         var commands = InputParser.Parse(input);
 
-        while (commands.Count > 0)
-        {
-            HandleCommand(commands.Dequeue());
-        }
+        var cycles = SignalProcessor.ProcessCommands(commands);
 
-        for (int i = 19; i < Ticks.Count; i += 40)
-        {
-            var signalStrength = Ticks[i].Tick * Ticks[i].X;
+        int sum = cycles
+            .Skip(19)
+            .Where((cycle, index) => index % 40 == 0)
+            .Sum(cycle => cycle.GetSignalStrength());
 
-            Console.WriteLine($"X: { Ticks[i].X }, Tick: { Ticks[i].Tick } SignalStrength: { signalStrength }");
-        }
-    }
-
-    private void HandleCommand(CPUCommand command)
-    {
-        switch (command.Type)
-        {
-            case CommandType.Noop:
-                HandleNoop();
-                break;
-            case CommandType.AddX:
-                HandleAddX(command.Value);
-                break;
-        }
-    }
-
-    private void HandleNoop()
-    {
-        Tick();
-        Ticks.Add(new XTick { X = X, Tick = currentTick });
-    }
-
-    private void HandleAddX(int? argument)
-    {
-        for (int i = 0; i < 2; i++)
-        {
-            Tick();
-            Ticks.Add(new XTick { X = X, Tick = currentTick });
-        }
-
-        X += argument ?? 0;
-    }
-
-    private void Tick()
-    {
-        currentTick++;
+        Console.WriteLine($"Sum of the interesting signal strengths { sum }");
     }
 }
