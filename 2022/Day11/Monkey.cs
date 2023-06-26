@@ -10,35 +10,46 @@ public class Monkey
     public int TestDevisableBy { get; set; } = 0;
     public int TestPassTargetId { get; set; } = 0;
     public int TestFailTargetId { get; set; } = 0;
-    public long InspectedItems { get; set; } = 0;
+    public long Inspections { get; set; } = 0;
 
     public Monkey(int id)
     {
         Id = id;
     }
 
-    public void Play(Queue<Monkey> monkeys)
+    public void Play(Queue<Monkey> monkeys, bool task2 = false)
     {
+        int modulus = 0;
+        if (task2)
+        {
+            var monkeyDevisableBys = monkeys
+                .Select(m => m.TestDevisableBy)
+                .ToArray();
+
+            modulus = MathHelper.GetLeastCommonMultiple(monkeyDevisableBys);
+        }
+
         foreach (var item in Items)
         {
-            InspectedItems++;
+            Inspections++;
 
-            var newItem = Operation(item);
+            var newItem = modulus == 0
+                ? Operation(item)
+                : Operation(item) % modulus;
 
-            if (TestItem(newItem))
-            {
-                monkeys.First(m => m.Id == TestPassTargetId).Items.Add(newItem);
-            }
-            else
-            {
-                monkeys.First(m => m.Id == TestFailTargetId).Items.Add(newItem);
-            }
+            var targetMonkeyId = DecideWhatToDoWithItem(newItem)
+                ? TestPassTargetId
+                : TestFailTargetId;
+
+            var targetMonkey = monkeys.First(m => m.Id == targetMonkeyId);
+
+            targetMonkey.Items.Add(newItem);
         }
 
         Items.Clear();
     }
 
-    private bool TestItem(long item)
+    private bool DecideWhatToDoWithItem(long item)
     {
         return item % TestDevisableBy == 0;
     }
@@ -53,28 +64,27 @@ public class Monkey
         Items.AddRange(items);
     }
 
-    public void ParseOperationLine(string line)
+    public void ParseOperationLine(string line, bool task2 = false)
     {
         var lineSplit = line
             .Replace("  Operation: new = ", "")
             .Split(' ');
 
-        var @operator = GetOperator(lineSplit[1]);
+        var op = GetOperator(lineSplit[1]);
 
         if (lineSplit.ElementAt(2) == "old")
         {
-            Operation = GetOperationWithOld(@operator);
+            Operation = GetOperationWithOld(op, task2);
+            return;
         }
-        else
-        {
-            var value = int.Parse(lineSplit.ElementAt(2));
-            Operation = GetOperationWithValue(@operator, value);
-        }
+
+        var value = int.Parse(lineSplit.ElementAt(2));
+        Operation = GetOperationWithVal(op, value, task2);
     }
 
-    private static MathOperators GetOperator(string @operator)
+    private static MathOperators GetOperator(string op)
     {
-        return @operator switch
+        return op switch
         {
             "+" => MathOperators.Add,
             "-" => MathOperators.Subtract,
@@ -84,26 +94,35 @@ public class Monkey
         };
     }
 
-    private static Func<long, long> GetOperationWithOld(MathOperators @operator)
+    private static Func<long, long> GetOperationWithOld(
+        MathOperators op,
+        bool task2 = false)
     {
-        return (long old) => @operator switch
+        int divider = task2 ? 1 : 3;
+
+        return (long old) => op switch
         {
-            MathOperators.Add => (old + old) / 3,
-            MathOperators.Subtract => (old - old) / 3,
-            MathOperators.Multiply => old * old / 3,
-            MathOperators.Divide => old / old / 3,
+            MathOperators.Add => (old + old) / divider,
+            MathOperators.Subtract => (old - old) / divider,
+            MathOperators.Multiply => old * old / divider,
+            MathOperators.Divide => old / old / divider,
             _ => throw new NotImplementedException(),
         };
     }
 
-    private static Func<long, long> GetOperationWithValue(MathOperators operand, int value)
+    private static Func<long, long> GetOperationWithVal(
+        MathOperators op,
+        int value,
+        bool task2 = false)
     {
-        return (long old) => operand switch
+        int divider = task2 ? 1 : 3;
+
+        return (long old) => op switch
         {
-            MathOperators.Add => (old + value) / 3,
-            MathOperators.Subtract => (old - value) / 3,
-            MathOperators.Multiply => old * value / 3,
-            MathOperators.Divide => old / value / 3,
+            MathOperators.Add => (old + value) / divider,
+            MathOperators.Subtract => (old - value) / divider,
+            MathOperators.Multiply => old * value / divider,
+            MathOperators.Divide => old / value / divider,
             _ => throw new NotImplementedException(),
         };
     }
@@ -120,10 +139,9 @@ public class Monkey
         if (line.Contains("true"))
         {
             TestPassTargetId = targetId;
+            return;
         }
-        else
-        {
-            TestFailTargetId = targetId;
-        }
+
+        TestFailTargetId = targetId;
     }
 }

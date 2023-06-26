@@ -4,7 +4,7 @@ namespace AdventOfCode2022.Day11;
 
 public partial class InputParser
 {
-    public static Queue<Monkey> Parse(string[] input)
+    public static Queue<Monkey> Parse(string[] input, bool task2 = false)
     {
         var monkeys = new Queue<Monkey>();
         Monkey currentMonkey = null!;
@@ -18,7 +18,8 @@ public partial class InputParser
 
             if (line.StartsWith("Monkey"))
             {
-                currentMonkey = new Monkey(int.Parse(GenerateDigitsRegexPattern().Match(line).Value));
+                currentMonkey = new Monkey(int.Parse(
+                    GenerateDigitsRegexPattern().Match(line).Value));
                 monkeys.Enqueue(currentMonkey);
             }
             else if (line.StartsWith("  Starting items:"))
@@ -27,7 +28,7 @@ public partial class InputParser
             }
             else if (line.StartsWith("  Operation:"))
             {
-                currentMonkey?.ParseOperationLine(line);
+                currentMonkey?.ParseOperationLine(line, task2);
             }
             else if (line.StartsWith("  Test:"))
             {

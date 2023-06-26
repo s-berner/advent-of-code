@@ -11,11 +11,11 @@ public class Task1 : IAdventOfCodeTask
         WatchMonkeysPlay(monkeys);
 
         var top2Monkeys = monkeys
-            .OrderByDescending(m => m.InspectedItems)
+            .OrderByDescending(m => m.Inspections)
             .Take(2)
             .ToArray();
 
-        var result = top2Monkeys[0].InspectedItems * top2Monkeys[1].InspectedItems;
+        var result = top2Monkeys[0].Inspections * top2Monkeys[1].Inspections;
 
         Console.WriteLine($"The product of the top 2 monkey item inspections is { result }");
     }
